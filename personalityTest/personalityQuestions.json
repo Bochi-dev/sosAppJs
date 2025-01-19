@@ -1,0 +1,266 @@
+[
+  {
+    "category": "Openness",
+    "questions": [
+      {
+        "question": "New quests and adventures sound awesome!",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I'm always wondering 'what if...?'",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "Brainstorming and crazy ideas are my jam.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      }
+    ],
+    "average": 0
+  },
+  {
+    "category": "Conscientiousness",
+    "questions": [
+      {
+        "question": "I like having a solid plan before I jump into things.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "Details matter! I'm all about getting things right.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I'm usually the one reminding everyone about deadlines.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      }
+    ],
+    "average": 0
+  },
+  {
+    "category": "Extraversion",
+    "questions": [
+      {
+        "question": "Hanging out with friends gives me energy.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "Being the center of attention is kinda fun.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I've got a squad of awesome people.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      }
+    ],
+    "average": 0
+  },
+  {
+    "category": "Agreeableness",
+    "questions": [
+      {
+        "question": "I'd rather avoid drama and keep things chill.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I feel for other people's struggles.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I tend to trust people unless they give me a reason not to.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      }
+    ],
+    "average": 0
+  },
+  {
+    "category": "Neuroticism",
+    "questions": [
+      {
+        "question": "I sometimes get stressed about stuff.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I overthink things sometimes.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "My mood can change pretty quickly.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      }
+    ],
+    "average": 0
+  },
+  {
+    "category": "Anxious Attachment",
+    "questions": [
+      {
+        "question": "I worry my friends/partner might ditch me.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I need a lot of reassurance that I'm liked/loved.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I get easily upset in my friendships/relationships.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      }
+    ],
+    "average": 0
+  },
+  {
+    "category": "Avoidant Attachment",
+    "questions": [
+      {
+        "question": "I like doing my own thing and having my space.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "Depending on others feels kinda uncomfortable.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I don't usually share my deep feelings.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      }
+    ],
+    "average": 0
+  },
+  {
+    "category": "Secure Attachment",
+    "questions": [
+      {
+        "question": "I'm comfortable being close to people.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I feel supported by my friends/partner.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      },
+      {
+        "question": "I can tell people what I need.",
+        "choice1": "Strongly Disagree",
+        "choice2": "Disagree",
+        "choice3": "Neutral",
+        "choice4": "Agree",
+        "choice5": "Strongly Agree",
+        "selected": 0
+      }
+    ],
+    "average": 0
+  }
+]
