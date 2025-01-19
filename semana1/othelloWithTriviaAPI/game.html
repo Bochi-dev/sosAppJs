@@ -1,0 +1,783 @@
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<style>
+
+#score {
+	position: absolute;
+	left: 0;
+	top: 520;
+	width: 520;
+	font-size: 48;
+	background-color: black;
+	color: white;
+	text-align: center;
+	
+	}
+
+</style>
+<script>
+//~ MVC (mode view controller)
+
+//~ model 
+	//~ 2 dimensional list (a grid contains information about what is found at every cell of the game board)
+//~ view 
+	//~ initial HTML (green squares with black border 8x8)
+//~ controller
+	//~ click on a cell (if valid cellm flip all surrounded discs to be current turn color, change whose turn it is)
+	var data = (JSON.parse(localStorage.getItem("data"))) ? JSON.parse(localStorage.getItem("data")) : {players:4} 
+	var questionBox;
+	var addQuestion;
+	var questionScore;
+	
+	var blackBackground;
+	var canMoveLayer;
+	var discLayer;
+	var gap = 3;
+	var offset = 10
+	var cellWidth = 60;
+	var turn = 1;
+	var scoreLabel;
+	var gameOver = false
+	
+	//~ 3 = black
+	//~ 1 = red
+	//~ 2 = white
+	//~ 4 = blue
+	var discs;
+	
+	let questions;
+	fetch("questions.json").then(res =>{
+			return res.json()
+		}).then(res => {
+			questions = res
+			
+			
+			
+			startGame()	
+		})
+	var currQuestion;
+	var questionCords = []
+	
+	//~ fetch("https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple").then(res =>{
+	//~ console.log(res);
+	//~ return res.json();
+	//~ }).then(
+	//~ loadedQuestions => {
+		//~ console.log(loadedQuestions.results)
+		//~ questions = loadedQuestions.results.map(loadedQuestion => {
+			//~ const formattedQuestion = {
+						//~ question:loadedQuestion.question,
+					  //~ }
+			//~ const answerChoices = [...loadedQuestion.incorrect_answers]
+			//~ console.log(answerChoices)
+			//~ index
+			//~ formattedQuestion.answer = Math.floor(Math.random()*3) + 1;
+			//~ adding correct answer at a random position
+			//~ answerChoices.splice(formattedQuestion.answer - 1, 0, loadedQuestion.correct_answer);
+			
+			//~ answerChoices.forEach((choice, index) => {
+				//~ formattedQuestion["choice" + (index+1)] = choice;
+				//~ })	
+				
+			//~ return formattedQuestion	
+			//~ })
+		//~ questions = loadedQuestions.results
+		//~ game.classList.remove("hidden")
+		//~ loader.classList.add("hidden")
+		//~ startGame()
+		//~ }
+	//~ ).catch(err => {
+		//~ console.log(err)
+		//~ }
+
+	//~ )
+	
+	var layout2 =  [
+	[0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0],
+	[0,0,0,1,2,0,0,0],
+	[0,0,1,0,0,2,0,0],
+	[0,1,0,0,0,0,2,0],
+	[1,0,0,0,0,0,0,2]
+	]
+	var layout3 =  [
+	[1,0,0,0,0,0,0,0],
+	[0,1,0,0,0,0,0,0],
+	[0,0,1,0,0,0,0,0],
+	[0,0,0,1,0,0,0,0],
+	[0,0,0,3,2,0,0,0],
+	[0,0,3,0,0,2,0,0],
+	[0,3,0,0,0,0,2,0],
+	[3,0,0,0,0,0,0,2]
+	]
+	var layout4 =  [
+	[3,0,0,0,0,0,0,1],
+	[0,3,0,0,0,0,1,0],
+	[0,0,3,0,0,1,0,0],
+	[0,0,0,3,1,0,0,0],
+	[0,0,0,4,2,0,0,0],
+	[0,0,4,0,0,2,0,0],
+	[0,4,0,0,0,0,2,0],
+	[4,0,0,0,0,0,0,2]
+	]
+		
+	var listOfPlayers = []
+	var listOfColors = ["red", "blue", "white", "yellow"]
+	var amountOfQuestions = 10
+	
+	class Player{
+		constructor(id, color){
+			this.id = id
+			this.color = color
+			this.answered = 0
+			}
+		}
+	
+	
+	//~ var discs =  [
+	//~ [2,0,0,0,0,0,0,1],
+	//~ [0,2,0,0,0,0,1,0],
+	//~ [0,0,2,0,0,1,0,0],
+	//~ [0,0,0,2,1,0,0,0],
+	//~ [0,0,0,1,2,0,0,0],
+	//~ [0,0,1,0,0,2,0,0],
+	//~ [0,1,0,0,0,0,2,0],
+	//~ [1,0,0,0,0,0,0,2]
+	//~ ]
+	
+	
+	
+	//~ ok now I know what is happening,
+	//~ the game is loading faster than the questions and that is making the error
+	//~ so what I have to do is to wait, until the questions are loaded to play the game
+	
+	//~ window.onload = function () {
+		//~ console.log("hello")
+		
+		//~ blackBackground = document.getElementById("blackBackground");
+		//~ questionBox = document.getElementById("questionBox")
+		//~ canMoveLayer = document.getElementById("canMoveLayer")
+		//~ discLayer = document.getElementById("discLayer")
+		//~ scoreLabel = document.getElementById("score");
+		
+		//~ blackBackground.style.width = cellWidth*8 + (gap*9)
+		//~ blackBackground.style.height = cellWidth*8 + (gap*9)
+		//~ drawGreenSquares();
+		//~ addPlayers();
+		//~ selectLayout();
+		//~ addQuestions()
+		//~ console.log(questions)
+		//~ turn = Math.floor(Math.random() * listOfPlayers.length) + 1
+		//~ drawDiscs();
+		//~ drawCanMoveLayer();
+		//~ redrawScore();
+		
+	//~ }
+	function startGame () {
+		//~ console.log("hello")
+		
+		blackBackground = document.getElementById("blackBackground");
+		
+		
+		questionBox = document.getElementById("questionBox")
+		addQuestion = document.getElementById("addQuestion")
+		questionScore = document.getElementById("questionScore")
+		
+		canMoveLayer = document.getElementById("canMoveLayer")
+		discLayer = document.getElementById("discLayer")
+		scoreLabel = document.getElementById("score");
+		
+		blackBackground.style.width = cellWidth*8 + (gap*9)
+		blackBackground.style.height = cellWidth*8 + (gap*9)
+		drawGreenSquares();
+		addPlayers();
+		selectLayout();
+		
+		
+		addQuestion.addEventListener("click", addQuestions)
+		
+		
+		console.log(questions)
+		turn = Math.floor(Math.random() * listOfPlayers.length) + 1
+		drawDiscs();
+		drawCanMoveLayer();
+		redrawScore();
+		redrawQuestionScore();
+		
+	}
+	
+	function addQuestions(){
+		questionBox.innerHTML = ""
+		let randindex = Math.floor(Math.random()*questions.length)
+		console.log("addQuestions", questions)
+		currQuestion = questions[randindex]
+		
+		//~ console.log(question)
+		
+		let questionText = document.createElement("p")
+		questionText.innerText = currQuestion.question
+		questionBox.appendChild(questionText)
+		
+		for (let i = 0; i < 4; i++){
+			choice = currQuestion[`choice${i+1}`]
+			let btn = document.createElement("button")
+			btn.innerText = choice
+			btn.setAttribute("number", i+1)
+			
+			btn.addEventListener("click", e => {
+				//~ if (!acceptingAnswers) return;
+				
+				acceptingAnswers = false;
+				const selectedChoice = e.target;
+				console.log(selectedChoice)
+				const selectedAnswer = selectedChoice.getAttribute("number")
+				console.log(selectedChoice.dataset)
+				
+				//~ console.log(selectedAnswer, currentQuestion.answer, currentQuestion)
+				//~ console.log(selectedAnswer == currentQuestion.answer)
+				
+				console.log(selectedAnswer, currQuestion, currQuestion.answer)
+				const classToApply = 
+					selectedAnswer == currQuestion.answer ? "correct" : "incorrect";
+					
+				//~ console.log(classToApply)
+				if (classToApply === "correct") {
+					let currPlayerWithTurn =  listOfPlayers[turn-1]
+					currPlayerWithTurn.answered++ 
+					console.log(currPlayerWithTurn)
+					console.log(currPlayerWithTurn.answered)
+					}
+					
+				selectedChoice.parentElement.classList.add(classToApply);
+				redrawQuestionScore()
+				
+				setTimeout(() => {
+					selectedChoice.parentElement.classList.remove(classToApply);
+					//~ getNewQuestion();
+					questionBox.innerHTML = ""
+					//~ addQuestion.disabled = false;
+					
+					}, 1000);
+				
+				})
+			
+			
+			
+			questionBox.appendChild(btn)
+			questionBox.appendChild(btn)
+		}
+		
+		addQuestion.disabled = true;
+		
+		}
+	
+	function addQuestionsCords(){
+		for (let i = 0; i < amountOfQuestions; i++){
+			let randomX = Math.floor(Math.random()*8)
+			let randomY = Math.floor(Math.random()*8)
+			let cords = [randomX, randomY]
+			//~ the layout has already been decided
+			let value = discs[randomX][randomY]
+			if (value == 0){
+				questionCords.push(cords)
+			}
+		}
+			
+		console.log(questionCords)
+	}
+		
+	function addPlayers(){
+		for (let i = 0; i < data.players; i++){
+			let randnum = Math.floor(Math.random()*listOfColors.length)
+			let rancolor = listOfColors[randnum]
+			listOfColors.splice(randnum, 1)
+			let player = new Player(i+1, rancolor)
+			listOfPlayers.push(player)
+			}
+		}
+	
+	function selectLayout(){
+		let layout;
+		
+		if (data.players == 4){
+			layout = layout4
+		} else if (data.players == 3){
+			layout = layout3
+		} else if (data.players == 2){
+			layout = layout2
+		}
+		
+		discs = layout
+				
+		}
+	
+	function isGameOver(){
+		let canMoveList = []
+		for (let i = 0; i < data.players; i++ ){
+			canMoveList.push(canMove(i+1))
+		}
+		console.log(canMoveList)
+		return canMoveList.every( v => v == false )
+	}	
+	
+	function drawGreenSquares(){
+		
+		for (var row = 0; row < 8; row++) {
+			for (var col = 0; col < 8; col++){
+				var greenSquare = document.createElement("div")
+				greenSquare.style.position = "absolute";
+				greenSquare.style.width = cellWidth;
+				greenSquare.style.height = cellWidth;
+				
+				greenSquare.style.backgroundColor = "green";
+				greenSquare.style.left = (cellWidth+gap)*col + gap;
+				greenSquare.style.top = (cellWidth+gap)*row + gap;
+				greenSquare.setAttribute("onclick", `clickedSquare(${row}, ${col})`)
+				
+				
+				
+				blackBackground.appendChild(greenSquare)
+			}
+		}
+		
+	}
+	
+	function clickedSquare(row, col) {
+		if (gameOver) return
+		//~ if the user is allowed to click here get all of the afected discs and flip them
+		//~ else return
+		
+		if (discs[row][col] != 0) return 
+		
+		if (canClickSpot(turn,row, col) == true){
+			var affectedDiscs = getAffectedDiscs(turn, row, col)
+			flipDiscs(affectedDiscs)
+			redrawScore();
+		} else return
+		
+		discs[row][col] = turn;
+		
+		//~ if its my turn and the next player can move then
+			//~ change to next turn
+		
+	
+		//~ if (turn == 1 && canMove(2)){
+			//~ turn = 2
+		//~ } else if (turn == 2 && canMove(3) ){
+			//~ turn = 3
+		//~ }  else if (turn == 3 && canMove(4) ){
+			//~ turn = 4
+		//~ } else if (turn == 4 && canMove(1) ){
+			//~ turn = 1
+		//~ }
+		
+		let currPlayerWithTurn = listOfPlayers[turn - 1]
+		if (turn == currPlayerWithTurn.id && canMove(currPlayerWithTurn.id)){
+			if (turn < listOfPlayers.length) {
+				turn++
+			} else {
+				turn = 1
+			}
+		}
+		console.log(turn)
+
+			
+		//~ if (canMove(1) == false
+			//~ && canMove(2) == false
+			//~ && canMove(3) == false
+			//~ && canMove(4) == false){
+			//~ alert("Game Over")
+			//~ gameOver = true
+		//~ }
+		if (isGameOver()){
+			alert("Game Over")
+			gameOver = true
+		}
+		
+		drawDiscs();
+		drawCanMoveLayer();
+		redrawScore();
+		addQuestion.disabled = false;
+	}
+	
+	function canMove(id){
+		for (var row = 0; row < 8; row++) {
+			for (var col = 0; col < 8; col++){
+				if (canClickSpot(id, row, col)){
+					return true
+				}
+			}
+		}
+		return false
+		
+	}
+	
+	function capitalizeFirstLetter(val) {
+		return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+	}
+	
+	function redrawScore(){
+		let points = {
+			"1":0,
+			"2":0,
+			"3":0,
+			"4":0
+			}
+		for (var row = 0; row < 8; row++){
+			for (var col = 0; col < 8; col++){
+				var value = discs[row][col]
+				if (value == 1){ 
+					points["1"] += 1;
+				} else if (value == 2) {
+					points["2"] += 1
+				} else if (value == 3){ 
+					points["3"] += 1;
+				} else if (value == 4) {
+					points["4"] += 1
+				} 
+			}
+		}
+		
+		//~ 3 = black
+		//~ 1 = red
+		//~ 2 = white
+		//~ 4 = blue
+		let pointsLabel = ""
+		
+		
+		listOfPlayers.map(p => {
+			pointsLabel += capitalizeFirstLetter(p.color) + ": " + points[`${p.id}`] + "<br>"
+			
+			});
+		
+		
+		scoreLabel.innerHTML = pointsLabel
+	}
+	
+	function redrawQuestionScore(){
+		let pointsQuestionLabel = ""
+		
+		listOfPlayers.map(p => {
+			//~ draw score for questions
+			pointsQuestionLabel += capitalizeFirstLetter(p.color) + ": " + `${p.answered}` + "<br>"
+			});
+		
+		
+		questionScore.innerHTML = pointsQuestionLabel
+	}
+		
+	function canClickSpot(id, row, col){
+		//~ if the number of affected discs by clicking this spot is 0 then return false
+		//~ else return true
+		var affectedDiscs = getAffectedDiscs(id, row, col);
+		if (affectedDiscs.length == 0) return false;
+		else return true
+		}
+	
+	function incrementScore( num ) {
+		score += num;
+	}
+	
+	
+		
+	function getAffectedDiscs(id, row, col){
+		var affectedDiscs = []
+		//~ from current spot:
+		//~ for all eight directions. (left right up down adn 4 diagonals)
+		//~ move along in direction until you reach a blank of your own color 
+		//~ (keeping track of all the opposite color locations along the way)
+		//~ if the terminal tile is your own color add those locations to the list that will 
+			//~ be returned
+		//~ return the list of affected discs
+		
+		//~ to the right
+		var couldBeaffected = [];
+		var colItereator = col;
+		while (colItereator < 7){
+			colItereator += 1;
+			var valueAtSpot = discs[row][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == id){
+				if (valueAtSpot == id){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: row, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+		//~ to the left
+		var couldBeaffected = [];
+		var colItereator = col;
+		while (colItereator > 0){
+			colItereator -= 1;
+			var valueAtSpot = discs[row][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: row, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+		//~ above
+		var couldBeaffected = [];
+		var rowIterator = row;
+		while (rowIterator > 0){
+			rowIterator -= 1; 
+			var valueAtSpot = discs[rowIterator][col];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: col}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+		//~ below
+		var couldBeaffected = [];
+		var rowIterator = row;
+		while (rowIterator < 7){
+			rowIterator += 1; 
+			var valueAtSpot = discs[rowIterator][col];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: col}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+		//~ down right
+		var couldBeaffected = [];
+		var rowIterator = row;
+		var colItereator = col;
+		while (rowIterator < 7 && colItereator < 7){
+			rowIterator += 1; 
+			colItereator += 1; 
+			var valueAtSpot = discs[rowIterator][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+		//~ down left
+		var couldBeaffected = [];
+		var rowIterator = row;
+		var colItereator = col;
+		while (rowIterator < 7 && colItereator > 0){
+			rowIterator += 1; 
+			colItereator -= 1; 
+			var valueAtSpot = discs[rowIterator][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+		//~ up left
+		var couldBeaffected = [];
+		var rowIterator = row;
+		var colItereator = col;
+		while (rowIterator > 0 && colItereator > 0){
+			rowIterator -= 1; 
+			colItereator -= 1; 
+			var valueAtSpot = discs[rowIterator][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+		//~ up left
+		var couldBeaffected = [];
+		var rowIterator = row;
+		var colItereator = col;
+		while (rowIterator > 0 && colItereator < 7){
+			rowIterator -= 1; 
+			colItereator += 1; 
+			var valueAtSpot = discs[rowIterator][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+			
+		
+		return affectedDiscs
+		}
+		
+	function flipDiscs(affectedDiscs) {
+		//~ for all items in the list : affectedDiscs:
+			//~ if the disc at that has spot a value 1
+				//~ make it a 2
+			//~ else 
+				//~ make it a 1
+		//~ console.log(affectedDiscs)
+		for (var i = 0; i < affectedDiscs.length; i++){
+			var spot = affectedDiscs[i]
+			//~ console.log("hello",discs[spot.row][spot.col] == 1)
+			discs[spot.row][spot.col] = turn
+			//~ if (discs[spot.row][spot.col] == 1){
+				//~ discs[spot.row][spot.col] = 2
+				
+			//~ } else {
+				//~ discs[spot.row][spot.col] = 1
+				
+			//~ } 
+		}
+		
+	}
+		
+	function drawDiscs() {
+		discLayer.innerHTML = "";
+		for (var row = 0; row < 8; row++){
+			for (var col = 0; col < 8; col++){
+				var value = discs[row][col]
+				if (value == 0){
+					
+				}
+				else {
+					var disc = document.createElement("div")
+					disc.style.position = "absolute";
+					disc.style.width = cellWidth-offset;
+					disc.style.height = cellWidth-offset;
+					disc.style.borderRadius = "50%";
+					disc.style.left = (cellWidth+gap)*col + gap + (offset/2);
+					disc.style.top = (cellWidth+gap)*row + gap + (offset/2);
+					
+					//~ if ( value == 1 ){
+						//~ disc.style.backgroundColor = "red";
+					//~ } else if ( value == 2) {
+						//~ disc.style.backgroundColor = "white";
+						//~ disc.style.backgroundColor = "white";
+					//~ } else if ( value == 3 ){
+						//~ disc.style.backgroundColor = "black";
+					//~ } else {
+						//~ disc.style.backgroundColor = "blue";
+					//~ }
+					let currPlayerWithTurn = listOfPlayers[value-1]
+					disc.style.backgroundColor = currPlayerWithTurn.color
+					discLayer.appendChild(disc)
+										
+				}
+			}
+		}
+	}
+	
+	function drawCanMoveLayer() {
+		canMoveLayer.innerHTML = "";
+		for (var row = 0; row < 8; row++){
+			for (var col = 0; col < 8; col++){
+				var value = discs[row][col]
+				if (value == 0 && canClickSpot(turn, row, col)){
+					
+					var discOutLine = document.createElement("div")
+					discOutLine.style.position = "absolute";
+					discOutLine.style.width = cellWidth-offset;
+					discOutLine.style.height = cellWidth-offset;
+					discOutLine.style.borderRadius = "50%";
+					discOutLine.style.left = (cellWidth+gap)*col + gap + (offset/4);
+					discOutLine.style.top = (cellWidth+gap)*row + gap + (offset/4);
+					discOutLine.style.zindex = 2;
+					discOutLine.setAttribute("onclick", `clickedSquare(${row}, ${col})`)
+					
+					//~ if (turn == 1 ){
+						//~ discOutLine.style.border = "2px solid red";
+					//~ } else if (turn == 2){
+						//~ discOutLine.style.border = "2px solid white";
+					//~ } else if (turn == 3 ){
+						//~ discOutLine.style.border = "2px solid black";
+					//~ } else if (turn == 4) {
+						//~ discOutLine.style.border = "2px solid blue";
+					//~ }
+					
+					let currPlayerWithTurn = listOfPlayers[turn-1]
+					discOutLine.style.border = "2px solid " + currPlayerWithTurn.color
+					
+					canMoveLayer.appendChild(discOutLine)
+										
+				}
+			}
+		}
+	}
+
+</script>
+	
+	<div id="blackBackground" style="
+	position: absolute;
+	left: 0;
+	top: 0;
+	background-color: black;
+	height: 500;
+	width: 500;"></div>
+	
+	<div id="questionBox" style="
+	position: absolute;
+	left: 520;
+	top: 0;
+	background-color: white;
+	height: 200;
+	width: 500;">
+	hello
+	
+	</div>
+	<p id="questionScore"  style="
+	position: absolute;
+	top: 300;
+	left: 520;">question score</p>
+	<button id="addQuestion" style="
+	position: absolute;
+	top: 450;
+	left: 520;">Add Question</button>
+	
+	<div id="discLayer"></div>
+	<div id="canMoveLayer"></div>
+	
+	
+	<div id="score">Black: 2 White: 2</div>
+	
+	
+	
+
+</html>

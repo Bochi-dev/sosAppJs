@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	<title>Main Menu</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 1.36" />
+	<script src="../main/base.js"></script>
+</head>
+
+<body>
+	<div id="menu">
+		<h1>Menu</h1><br>
+		<div id="menuOpts">
+			<button id="twoPlayers">2 PLAYERS</button><br>
+			<button id="threePlayers">3 PLAYERS</button><br>
+			<button id="fourPlayers">4 PLAYERS</button>
+		</div>
+	</div>
+	
+	
+</body>
+
+<script>
+	var data = {
+		players: "none"
+		}
+	var twoPlayer;
+	var threePlayers;
+	var fourPlayers;
+	
+	window.addEventListener("load", () => {
+		console.log("hello")
+		fourPlayers = document.getElementById("fourPlayers")
+		threePlayers = document.getElementById("threePlayers")
+		twoPlayers = document.getElementById("twoPlayers")
+		
+		
+		fourPlayers.addEventListener("click", playFourPlayers)
+		threePlayers.addEventListener("click", playThreePlayers)
+		twoPlayers.addEventListener("click", playTwoPlayers)
+		});
+		
+	function GoToGame(){
+		window.location.assign("game.html")
+		} 
+		
+	function save(){
+		localStorage.setItem("data", JSON.stringify(data))
+		}
+	
+	function playTwoPlayers(){
+		data.players = 2
+		save()
+		GoToGame()
+		}
+	
+	function playThreePlayers(){
+		data.players = 3
+		save()
+		GoToGame()
+		}
+		
+	function playFourPlayers(){
+		data.players = 4
+		save()
+		GoToGame()
+		}
+		
+</script>
+
+</html>

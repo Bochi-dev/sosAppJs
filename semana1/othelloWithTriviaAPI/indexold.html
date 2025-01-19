@@ -1,0 +1,403 @@
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<script>
+//~ MVC (mode view controller)
+
+//~ model 
+	//~ 2 dimensional list (a grid contains information about what is found at every cell of the game board)
+//~ view 
+	//~ initial HTML (green squares with black border 8x8)
+//~ controller
+	//~ click on a cell (if valid cellm flip all surrounded discs to be current turn color, change whose turn it is)
+	
+	var blackBackground;
+	var canMoveLayer
+	var discLayer;
+	var gap = 3;
+	var offset = 10
+	var cellWidth = 60;
+	var turn = 1;
+	var scoreLabel;
+	var gameOver = false
+	
+	var discs = [
+	[2,0,0,0,0,0,0,1],
+	[0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0],
+	[0,0,0,2,1,0,0,0],
+	[0,0,0,1,2,0,0,0],
+	[0,0,0,0,0,0,0,0],
+	[0,0,0,0,0,0,0,0],
+	[2,0,0,0,0,0,0,1]
+	]
+	
+	window.onload = function () {
+		console.log("hello")
+		blackBackground = document.getElementById("blackBackground");
+		canMoveLayer = document.getElementById("canMoveLayer")
+		discLayer = document.getElementById("discLayer")
+		scoreLabel = document.getElementById("score");
+		
+		blackBackground.style.width = cellWidth*8 + (gap*9)
+		blackBackground.style.height = cellWidth*8 + (gap*9)
+		drawGreenSquares();
+		drawDiscs();
+		drawCanMoveLayer();
+		
+		
+		}
+	function drawGreenSquares(){
+		
+		for (var row = 0; row < 8; row++) {
+			for (var col = 0; col < 8; col++){
+				var greenSquare = document.createElement("div")
+				greenSquare.style.position = "absolute";
+				greenSquare.style.width = cellWidth;
+				greenSquare.style.height = cellWidth;
+				
+				greenSquare.style.backgroundColor = "green";
+				greenSquare.style.left = (cellWidth+gap)*col + gap;
+				greenSquare.style.top = (cellWidth+gap)*row + gap;
+				greenSquare.setAttribute("onclick", `clickedSquare(${row}, ${col})`)
+				
+				
+				
+				blackBackground.appendChild(greenSquare)
+			}
+		}
+		
+	}
+	
+	function clickedSquare(row, col) {
+		if (gameOver) return
+		//~ if the user is allowed to click here get all of the afected discs and flip them
+		//~ else return
+		
+		if (discs[row][col] != 0) return 
+		
+		if (canClickSpot(turn,row, col) == true){
+			var affectedDiscs = getAffectedDiscs(turn, row, col)
+			flipDiscs(affectedDiscs)
+			redrawScore();
+		} else return
+		
+		discs[row][col] = turn;
+		if (turn == 1 && canMove(2)){
+			turn = 2
+		} else if (turn == 2 && canMove(1) ){
+			turn = 1
+			}
+		if (canMove(1) == false && canMove(2) == false){
+			alert("Game Over")
+			gameOver = true
+		}
+		drawDiscs();
+		drawCanMoveLayer();
+		redrawScore();
+	}
+	
+	function canMove(id){
+		for (var row = 0; row < 8; row++) {
+			for (var col = 0; col < 8; col++){
+				if (canClickSpot(id, row, col)){
+					return true
+				}
+			}
+		}
+		return false
+		
+	}
+	
+	function redrawScore(){
+		var ones = 0
+		var twos = 0
+		for (var row = 0; row < 8; row++){
+			for (var col = 0; col < 8; col++){
+				var value = discs[row][col]
+				if (value == 1) ones += 1;
+				else if (value == 2) twos += 1;
+			}
+		}
+		scoreLabel.innerHTML = `Black: ${ones} White: ${twos}`
+	}
+		
+	function canClickSpot(id, row, col){
+		//~ if the number of affected discs by clicking this spot is 0 then return false
+		//~ else return true
+		var affectedDiscs = getAffectedDiscs(id, row, col);
+		if (affectedDiscs.length == 0) return false;
+		else return true
+		}
+		
+	function getAffectedDiscs(id, row, col){
+		var affectedDiscs = []
+		//~ from current spot:
+		//~ for all eight directions. (left right up down adn 4 diagonals)
+		//~ move along in direction until you reach a blank of your own color 
+		//~ (keeping track of all the opposite color locations along the way)
+		//~ if the terminal tile is your own color add those locations to the list that will 
+			//~ be returned
+		//~ return the list of affected discs
+		
+		//~ to the right
+		var couldBeaffected = [];
+		var colItereator = col;
+		while (colItereator < 7){
+			colItereator += 1;
+			var valueAtSpot = discs[row][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == id){
+				if (valueAtSpot == id){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: row, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+		//~ to the left
+		var couldBeaffected = [];
+		var colItereator = col;
+		while (colItereator > 0){
+			colItereator -= 1;
+			var valueAtSpot = discs[row][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: row, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+		//~ above
+		var couldBeaffected = [];
+		var rowIterator = row;
+		while (rowIterator > 0){
+			rowIterator -= 1; 
+			var valueAtSpot = discs[rowIterator][col];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: col}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+		//~ below
+		var couldBeaffected = [];
+		var rowIterator = row;
+		while (rowIterator < 7){
+			rowIterator += 1; 
+			var valueAtSpot = discs[rowIterator][col];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: col}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+		//~ down right
+		var couldBeaffected = [];
+		var rowIterator = row;
+		var colItereator = col;
+		while (rowIterator < 7 && colItereator < 7){
+			rowIterator += 1; 
+			colItereator += 1; 
+			var valueAtSpot = discs[rowIterator][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+		//~ down left
+		var couldBeaffected = [];
+		var rowIterator = row;
+		var colItereator = col;
+		while (rowIterator < 7 && colItereator > 0){
+			rowIterator += 1; 
+			colItereator -= 1; 
+			var valueAtSpot = discs[rowIterator][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+		//~ up left
+		var couldBeaffected = [];
+		var rowIterator = row;
+		var colItereator = col;
+		while (rowIterator > 0 && colItereator > 0){
+			rowIterator -= 1; 
+			colItereator -= 1; 
+			var valueAtSpot = discs[rowIterator][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+		//~ up left
+		var couldBeaffected = [];
+		var rowIterator = row;
+		var colItereator = col;
+		while (rowIterator > 0 && colItereator < 7){
+			rowIterator -= 1; 
+			colItereator += 1; 
+			var valueAtSpot = discs[rowIterator][colItereator];
+			if (valueAtSpot == 0 || valueAtSpot == turn){
+				if (valueAtSpot == turn){
+					affectedDiscs = affectedDiscs.concat(couldBeaffected);
+				}
+				break
+			} else {
+				var discLocation = {row: rowIterator, col: colItereator}
+					couldBeaffected.push(discLocation) 
+				}
+				
+			}
+			
+			
+		
+		return affectedDiscs
+		}
+		
+	function flipDiscs(affectedDiscs) {
+		//~ for all items in the list : affectedDiscs:
+			//~ if the disc at that has spot a value 1
+				//~ make it a 2
+			//~ else 
+				//~ make it a 1
+		console.log(affectedDiscs)
+		for (var i = 0; i < affectedDiscs.length; i++){
+			var spot = affectedDiscs[i]
+			console.log("hello",discs[spot.row][spot.col] == 1)
+			if (discs[spot.row][spot.col] == 1){
+				discs[spot.row][spot.col] = 2
+				
+			} else {
+				discs[spot.row][spot.col] = 1
+				
+			}
+		}
+		
+	}
+		
+	function drawDiscs() {
+		discLayer.innerHTML = "";
+		for (var row = 0; row < 8; row++){
+			for (var col = 0; col < 8; col++){
+				var value = discs[row][col]
+				if (value == 0){
+					
+				}
+				else {
+					var disc = document.createElement("div")
+					disc.style.position = "absolute";
+					disc.style.width = cellWidth-offset;
+					disc.style.height = cellWidth-offset;
+					disc.style.borderRadius = "50%";
+					disc.style.left = (cellWidth+gap)*col + gap + (offset/2);
+					disc.style.top = (cellWidth+gap)*row + gap + (offset/2);
+					
+					if (value == 1 ){
+						disc.style.backgroundColor = "black";
+					} else {
+						disc.style.backgroundColor = "white";
+					}
+					
+					discLayer.appendChild(disc)
+										
+				}
+			}
+		}
+	}
+	
+	function drawCanMoveLayer() {
+		canMoveLayer.innerHTML = "";
+		for (var row = 0; row < 8; row++){
+			for (var col = 0; col < 8; col++){
+				var value = discs[row][col]
+				if (value == 0 && canClickSpot(turn, row, col)){
+					
+					var discOutLine = document.createElement("div")
+					discOutLine.style.position = "absolute";
+					discOutLine.style.width = cellWidth-offset;
+					discOutLine.style.height = cellWidth-offset;
+					discOutLine.style.borderRadius = "50%";
+					discOutLine.style.left = (cellWidth+gap)*col + gap + (offset/4);
+					discOutLine.style.top = (cellWidth+gap)*row + gap + (offset/4);
+					discOutLine.style.zindex = 2;
+					discOutLine.setAttribute("onclick", `clickedSquare(${row}, ${col})`)
+					
+					if (turn == 1 ){
+						discOutLine.style.border = "2px solid black";
+					} else {
+						discOutLine.style.border = "2px solid white";
+					}
+					
+					canMoveLayer.appendChild(discOutLine)
+										
+				}
+			}
+		}
+	}
+
+</script>
+	
+	<div id="blackBackground" style="
+	position: absolute;
+	left: 0;
+	top: 0;
+	background-color: black;
+	height: 500;
+	width: 500;"></div>
+	<div id="discLayer"></div>
+	<div id="canMoveLayer"></div>
+	<div id="score" style="position: absolute;
+	left: 0;
+	top: 520;
+	width: 520;
+	font-size: 48;
+	background-color: black;
+	color: white;
+	text-align: center;
+	
+	">Black: 2 White: 2</div>
+	
+	
+
+</html>
